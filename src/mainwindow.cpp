@@ -271,6 +271,21 @@ void MainWindow::openSettingsWindow() {
   dialog.exec();
   this->show();
   this->loadPref();
+  
+  // Reload lock state from settings
+  bool newLockState = settings
+                          .value("gen/interfaceLock",
+                                 QVariant::fromValue(PrefConstants::INTERFACE_LOCK))
+                          .toBool();
+  if (newLockState != isLocked) {
+    isLocked = newLockState;
+    updateLockButton();
+    if (isLocked) {
+      disableControls();
+    } else if (engine) {
+      enableControls();
+    }
+  }
 }
 
 void MainWindow::openFileDialog() {
@@ -335,6 +350,7 @@ void MainWindow::toggleLock() {
   if (isLocked) {
     disableControls();
   } else {
+    // Re-enable playback controls if a subtitle is loaded
     if (engine) {
       enableControls();
     }
@@ -367,6 +383,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e) {
 void MainWindow::dragMoveEvent() {}
 
 void MainWindow::dropEvent(QDropEvent *e) {
+  if (isLocked) {
+    return; // Ignore drop events when interface is locked
+  }
+  
   this->hide();
   QString path = e->mimeData()->urls()[0].toLocalFile();
   int index = path.lastIndexOf(".");
