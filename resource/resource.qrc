@@ -12,5 +12,7 @@
         <file>icon.png</file>
         <file>icons/ic_play_opt_48px.png</file>
         <file>icons/ic_pause_opt_48px.png</file>
+        <file>icons/ic_lock_48px.png</file>
+        <file>icons/ic_unlock_48px.png</file>
     </qresource>
 </RCC>

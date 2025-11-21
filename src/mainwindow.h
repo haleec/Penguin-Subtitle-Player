@@ -33,6 +33,7 @@ public slots:
   void openFileDialog();
   void openSkipToTimeDialog();
   void activateNextClickCounts();
+  void toggleLock();
 
 protected:
   void paintEvent(QPaintEvent *event);
@@ -55,6 +56,8 @@ private:
   void loadPref();
   void setup();
   void enableControls();
+  void disableControls();
+  void updateLockButton();
   void setPlay(bool play);
   QString getSubtitle(bool sliderMoved);
   QString getEncoding(QString preset);
@@ -76,6 +79,7 @@ private:
   QMenu *menu = 0;
   QSettings settings;
   bool skipped = false;
+  bool isLocked = false;
 };
 
 #endif // MAINWINDOW_H

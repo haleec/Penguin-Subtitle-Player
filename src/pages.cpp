@@ -53,6 +53,13 @@ void GeneralPage::load() {
               QVariant::fromValue(PrefConstants::RESET_SPEED_FACTOR_ON_LAUNCH))
           .toBool();
   resetSpeedFactorOnLaunchCbx->setChecked(isResetSpeedFactorOnLaunch);
+
+  bool isInterfaceLock =
+      settings
+          .value("gen/interfaceLock",
+                 QVariant::fromValue(PrefConstants::INTERFACE_LOCK))
+          .toBool();
+  interfaceLockCbx->setChecked(isInterfaceLock);
 }
 
 void GeneralPage::save() {
@@ -63,6 +70,7 @@ void GeneralPage::save() {
   settings.setValue("gen/speedFactor", speedFactorSpinBox->value());
   settings.setValue("gen/resetSpeedFactorOnLaunch",
                     resetSpeedFactorOnLaunchCbx->isChecked());
+  settings.setValue("gen/interfaceLock", interfaceLockCbx->isChecked());
 }
 
 void GeneralPage::openDirDialog() {
@@ -146,11 +154,18 @@ GeneralPage::GeneralPage(QWidget *parent, ConfigDialog *configDialog)
   speedLayout->addLayout(speedFactorLayout);
   speedGroup->setLayout(speedLayout);
 
+  QGroupBox *interfaceGroup = new QGroupBox(tr("Interface"));
+  interfaceLockCbx = new QCheckBox(tr("Lock interface by default"));
+  QVBoxLayout *interfaceLayout = new QVBoxLayout;
+  interfaceLayout->addWidget(interfaceLockCbx);
+  interfaceGroup->setLayout(interfaceLayout);
+
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->addWidget(filesGroup);
   mainLayout->addWidget(encodingGroup);
   mainLayout->addWidget(adjustGroup);
   mainLayout->addWidget(speedGroup);
+  mainLayout->addWidget(interfaceGroup);
   mainLayout->addWidget(resetButton);
   mainLayout->addStretch(1);
   setLayout(mainLayout);
