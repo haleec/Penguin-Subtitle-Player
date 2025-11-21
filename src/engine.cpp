@@ -9,7 +9,6 @@
 
 #include <QFile>
 #include <QRegularExpression>
-#include <QTextCodec>
 
 #include "parser.h"
 
