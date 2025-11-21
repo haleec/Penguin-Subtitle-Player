@@ -19,6 +19,7 @@
 #include "QMouseEvent"
 #include "QObject"
 #include "QPainter"
+#include "QShortcut"
 #include "QSizeGrip"
 #include "QString"
 #include "QStyle"
@@ -65,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
           this, SLOT(showToggleContextMenu(const QPoint &)));
 
   connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(openFileDialog()));
+  connect(ui->lockButton, SIGNAL(clicked()), this, SLOT(toggleLock()));
   connect(ui->prefButton, SIGNAL(clicked()), this, SLOT(openSettingsWindow()));
   connect(ui->quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
   connect(ui->horizontalSlider, SIGNAL(sliderMoved(int)), this,
@@ -125,6 +127,20 @@ MainWindow::MainWindow(QWidget *parent)
 
   this->loadPref();
   setAcceptDrops(true);
+
+  // Load lock preference
+  isLocked = settings
+                 .value("gen/interfaceLock",
+                        QVariant::fromValue(PrefConstants::INTERFACE_LOCK))
+                 .toBool();
+  updateLockButton();
+  if (isLocked) {
+    disableControls();
+  }
+  
+  // Add keyboard shortcut for Ctrl+L
+  QShortcut *lockShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), this);
+  connect(lockShortcut, SIGNAL(activated()), this, SLOT(toggleLock()));
 }
 
 MainWindow::~MainWindow() {
@@ -132,6 +148,7 @@ MainWindow::~MainWindow() {
   settings.setValue("appearance/windowY", this->y());
   settings.setValue("appearance/windowWidth", this->width());
   settings.setValue("appearance/windowHeight", this->height());
+  settings.setValue("gen/interfaceLock", isLocked);
 
   delete menu;
   delete engine;
@@ -254,6 +271,21 @@ void MainWindow::openSettingsWindow() {
   dialog.exec();
   this->show();
   this->loadPref();
+  
+  // Reload lock state from settings
+  bool newLockState = settings
+                          .value("gen/interfaceLock",
+                                 QVariant::fromValue(PrefConstants::INTERFACE_LOCK))
+                          .toBool();
+  if (newLockState != isLocked) {
+    isLocked = newLockState;
+    updateLockButton();
+    if (isLocked) {
+      disableControls();
+    } else if (engine) {
+      enableControls();
+    }
+  }
 }
 
 void MainWindow::openFileDialog() {
@@ -276,6 +308,10 @@ void MainWindow::openFileDialog() {
 void MainWindow::openSkipToTimeDialog() {
   if (!engine)
     return;
+
+  if (isLocked) {
+    return; // Ignore time skip when interface is locked
+  }
 
   this->hide();
 
@@ -311,6 +347,23 @@ void MainWindow::activateNextClickCounts() {
   }
 }
 
+void MainWindow::toggleLock() {
+  isLocked = !isLocked;
+  updateLockButton();
+  
+  if (isLocked) {
+    disableControls();
+  } else {
+    // Re-enable playback controls if a subtitle is loaded
+    if (engine) {
+      enableControls();
+    }
+  }
+  
+  // Save lock state to settings
+  settings.setValue("gen/interfaceLock", isLocked);
+}
+
 /*
  * Protected methods
  */
@@ -334,6 +387,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e) {
 void MainWindow::dragMoveEvent() {}
 
 void MainWindow::dropEvent(QDropEvent *e) {
+  if (isLocked) {
+    return; // Ignore drop events when interface is locked
+  }
+  
   this->hide();
   QString path = e->mimeData()->urls()[0].toLocalFile();
   int index = path.lastIndexOf(".");
@@ -505,7 +562,9 @@ void MainWindow::setup() {
   this->ui->horizontalSlider->setRange(
       0, (int)(engine->getFinishTime() / SLIDER_RATIO));
   ui->horizontalSlider->setValue((int)(currentTime / SLIDER_RATIO));
-  enableControls();
+  if (!isLocked) {
+    enableControls();
+  }
 }
 
 void MainWindow::enableControls() {
@@ -515,6 +574,25 @@ void MainWindow::enableControls() {
   ui->nextButton->setEnabled(true);
   ui->toggleButton->setEnabled(true);
   ui->horizontalSlider->setEnabled(true);
+}
+
+void MainWindow::disableControls() {
+  ui->backwardButton->setEnabled(false);
+  ui->forwardButton->setEnabled(false);
+  ui->prevButton->setEnabled(false);
+  ui->nextButton->setEnabled(false);
+  ui->toggleButton->setEnabled(false);
+  ui->horizontalSlider->setEnabled(false);
+}
+
+void MainWindow::updateLockButton() {
+  if (isLocked) {
+    ui->lockButton->setIcon(QIcon(":/icons/ic_lock_48px.png"));
+    ui->lockButton->setToolTip(tr("Unlock Interface (Ctrl+L)"));
+  } else {
+    ui->lockButton->setIcon(QIcon(":/icons/ic_unlock_48px.png"));
+    ui->lockButton->setToolTip(tr("Lock Interface (Ctrl+L)"));
+  }
 }
 
 void MainWindow::setPlay(bool play) {

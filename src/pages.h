@@ -38,6 +38,7 @@ private:
   QSpinBox *adjustIntervalSpinBox;
   QDoubleSpinBox *speedFactorSpinBox;
   QCheckBox *resetSpeedFactorOnLaunchCbx;
+  QCheckBox *interfaceLockCbx;
 };
 
 class AppearancePage : public PrefPage {

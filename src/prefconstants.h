@@ -33,6 +33,8 @@ const static int FONT_SHADOW_OFFSET_LIMIT = 100;
 
 const static unsigned int FONT_COLOR = 0xffffffff; // white
 
+const static bool INTERFACE_LOCK = false;
+
 const static bool REMEMBER_WINDOW_POS_AND_SIZE = true;
 const static int WINDOW_X = 0;
 const static int WINDOW_Y = 0;
