@@ -34,6 +34,7 @@
 #include "prefconstants.h"
 #include "string"
 #include "ui_mainwindow.h"
+#include <vector>
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <QStringConverter>
@@ -625,8 +626,9 @@ QString MainWindow::getEncoding(QString preset) {
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
   // Qt 6: Use QStringConverter to enumerate available codecs
-  // Common encodings that QStringConverter supports
-  const char* encodings[] = {
+  // QStringConverter supports a limited set of encodings compared to Qt 5
+  // These are the standard encodings supported by QStringConverter
+  static const std::vector<const char*> encodings = {
     "UTF-8", "UTF-16", "UTF-16LE", "UTF-16BE", "UTF-32", "UTF-32LE", "UTF-32BE",
     "ISO-8859-1", "Latin1", "System"
   };
