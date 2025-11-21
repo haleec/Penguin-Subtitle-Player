@@ -309,6 +309,10 @@ void MainWindow::openSkipToTimeDialog() {
   if (!engine)
     return;
 
+  if (isLocked) {
+    return; // Ignore time skip when interface is locked
+  }
+
   this->hide();
 
   bool ok;
