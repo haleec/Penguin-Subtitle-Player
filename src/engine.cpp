@@ -10,12 +10,6 @@
 #include <QFile>
 #include <QRegularExpression>
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#include <QStringConverter>
-#else
-#include <QTextCodec>
-#endif
-
 #include "parser.h"
 
 Engine::Engine(QString path, QString encoding) {
