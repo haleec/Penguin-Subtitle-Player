@@ -8,9 +8,6 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-# Qt 6 compatibility: Add core5compat for text codec compatibility
-greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
-
 TARGET = PenguinSubtitlePlayer
 TEMPLATE = app
 
