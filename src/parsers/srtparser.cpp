@@ -4,12 +4,17 @@
 #include <QFile>
 #include <QRegularExpression>
 #include <QString>
-#include <QTextCodec>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <streambuf>
 #include <vector>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringConverter>
+#else
+#include <QTextCodec>
+#endif
 
 std::vector<Engine::SubtitleItem> SrtParser::parseFile(QFile &f,
                                                        QString encoding) {
@@ -22,10 +27,21 @@ std::vector<Engine::SubtitleItem> SrtParser::parseFile(QFile &f,
   if (encoding.isEmpty())
     encoding = "UTF-8";
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  // Qt 6: Use QStringConverter
+  auto encodingOpt = QStringConverter::encodingForName(encoding.toUtf8());
+  if (encodingOpt) {
+    in.setEncoding(*encodingOpt);
+  } else {
+    throw std::invalid_argument("Unknown Encoding");
+  }
+#else
+  // Qt 5: Use QTextCodec
   if (QTextCodec::codecForName(encoding.toUtf8()))
     in.setCodec(encoding.toUtf8());
   else
     throw std::invalid_argument("Unknown Encoding");
+#endif
 
   QString content = in.readAll();
 

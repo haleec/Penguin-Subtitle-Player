@@ -2,12 +2,12 @@
 #include "QAction"
 #include "QByteArray"
 #include "QDebug"
-#include "QDesktopWidget"
 #include "QDir"
 #include "QDragEnterEvent"
 #include "QDropEvent"
 #include "QFileDialog"
 #include "QGraphicsDropShadowEffect"
+#include "QGuiApplication"
 #include "QIcon"
 #include "QInputDialog"
 #include "QLayout"
@@ -19,11 +19,11 @@
 #include "QMouseEvent"
 #include "QObject"
 #include "QPainter"
+#include "QScreen"
 #include "QShortcut"
 #include "QSizeGrip"
 #include "QString"
 #include "QStyle"
-#include "QTextCodec"
 #include "QTimer"
 #include "chardet.h"
 #include "cmath"
@@ -34,6 +34,12 @@
 #include "prefconstants.h"
 #include "string"
 #include "ui_mainwindow.h"
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringConverter>
+#else
+#include <QTextCodec>
+#endif
 
 /*
  * Constructor and destructor
@@ -112,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
   } else {
     this->setGeometry(
         QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, this->size(),
-                            qApp->desktop()->availableGeometry()));
+                            QGuiApplication::primaryScreen()->availableGeometry()));
   }
 
   bool resetSpeedFactorOnLaunch =
@@ -617,11 +623,24 @@ QString MainWindow::getSubtitle(bool sliderMoved) {
 QString MainWindow::getEncoding(QString preset) {
   QStringList codecNames;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  // Qt 6: Use QStringConverter to enumerate available codecs
+  // Common encodings that QStringConverter supports
+  const char* encodings[] = {
+    "UTF-8", "UTF-16", "UTF-16LE", "UTF-16BE", "UTF-32", "UTF-32LE", "UTF-32BE",
+    "ISO-8859-1", "Latin1", "System"
+  };
+  for (const char* encoding : encodings) {
+    codecNames.push_back(QString::fromLatin1(encoding));
+  }
+#else
+  // Qt 5: Use QTextCodec
   QList<QByteArray> codecs = QTextCodec::availableCodecs();
   for (QList<QByteArray>::const_iterator it = codecs.constBegin();
        it != codecs.constEnd(); it++) {
     codecNames.push_back(it->constData());
   }
+#endif
 
   codecNames.sort();
   codecNames.removeDuplicates();
