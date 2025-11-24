@@ -376,7 +376,7 @@ void MainWindow::toggleLock() {
  */
 
 // fix shadowing problem in OS X
-void MainWindow::paintEvent(QPaintEvent *event) {
+void MainWindow::paintEvent([[maybe_unused]] QPaintEvent *event) {
   QPainter p(this);
   p.setCompositionMode(QPainter::CompositionMode_Clear);
   p.fillRect(this->rect(), Qt::transparent);
@@ -428,17 +428,17 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   }
 }
 
-void MainWindow::enterEvent(QEvent *event) {
+void MainWindow::enterEvent([[maybe_unused]] QEvent *event) {
   ui->topWidgets->show();
   ui->bottomWidgets->show();
 }
 
-void MainWindow::leaveEvent(QEvent *event) {
+void MainWindow::leaveEvent([[maybe_unused]] QEvent *event) {
   ui->topWidgets->hide();
   ui->bottomWidgets->hide();
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
+void MainWindow::resizeEvent([[maybe_unused]] QResizeEvent *event) {
   if (engine)
     ui->subtitleLabel->setText(getSubtitle(false));
 }

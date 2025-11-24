@@ -1,0 +1,35 @@
+# CharDistribution.h Patch for Unused Parameter Warnings
+
+This patch fixes unused parameter warnings in src/uchardet/src/CharDistribution.h
+The file is located in the uchardet submodule and needs to be applied after the submodule is initialized.
+
+## To apply this patch:
+
+1. Initialize the submodule:
+   ```bash
+   git submodule update --init --recursive
+   ```
+
+2. Apply the following changes to src/uchardet/src/CharDistribution.h:
+
+### Change 1: Line 53 - HandleData method
+```diff
+-  void HandleData(const char* aBuf, PRUint32 aLen) {}
++  void HandleData([[maybe_unused]] const char* aBuf, [[maybe_unused]] PRUint32 aLen) {}
+```
+
+### Change 2: Line 100 - GetOrder method (base class)
+```diff
+-  virtual PRInt32 GetOrder(const char* str) {return -1;}
++  virtual PRInt32 GetOrder([[maybe_unused]] const char* str) {return -1;}
+```
+
+## Explanation:
+
+The [[maybe_unused]] attribute tells the compiler that these parameters are intentionally unused.
+This is appropriate for:
+- HandleData: Empty implementation that will be overridden or extended later
+- GetOrder: Base class virtual method with default implementation that doesn't use the parameter
+
+These changes suppress legitimate compiler warnings for parameters that are part of the interface
+but not used in the base class implementation.
