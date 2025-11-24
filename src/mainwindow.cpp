@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
   
   // Add keyboard shortcut for Ctrl+L
-  QShortcut *lockShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), this);
+  QShortcut *lockShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_L), this);
   connect(lockShortcut, SIGNAL(activated()), this, SLOT(toggleLock()));
 }
 
@@ -412,19 +412,19 @@ void MainWindow::dropEvent(QDropEvent *e) {
 void MainWindow::mousePressEvent(QMouseEvent *event) {
   if (ui->topSpacer->underMouse()) {
     ui->topSpacer->setCursor(Qt::ClosedHandCursor);
-    m_nMouseClick_X_Coordinate = event->x();
-    m_nMouseClick_Y_Coordinate = event->y();
+    m_nMouseClick_X_Coordinate = event->position().x();
+    m_nMouseClick_Y_Coordinate = event->position().y();
   }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
+void MainWindow::mouseReleaseEvent([[maybe_unused]] QMouseEvent *event) {
   ui->topSpacer->setCursor(Qt::OpenHandCursor);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   if (ui->topSpacer->underMouse()) {
-    move(event->globalX() - m_nMouseClick_X_Coordinate,
-         event->globalY() - m_nMouseClick_Y_Coordinate);
+    move(event->globalPosition().x() - m_nMouseClick_X_Coordinate,
+         event->globalPosition().y() - m_nMouseClick_Y_Coordinate);
   }
 }
 
