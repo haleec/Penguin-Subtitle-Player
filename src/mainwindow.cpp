@@ -146,7 +146,7 @@ MainWindow::MainWindow(QWidget *parent)
   }
   
   // Add keyboard shortcut for Ctrl+L
-  QShortcut *lockShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_L), this);
+  QShortcut *lockShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_L), this);
   connect(lockShortcut, SIGNAL(activated()), this, SLOT(toggleLock()));
 }
 
@@ -376,7 +376,7 @@ void MainWindow::toggleLock() {
  */
 
 // fix shadowing problem in OS X
-void MainWindow::paintEvent(QPaintEvent *event) {
+void MainWindow::paintEvent([[maybe_unused]] QPaintEvent *event) {
   QPainter p(this);
   p.setCompositionMode(QPainter::CompositionMode_Clear);
   p.fillRect(this->rect(), Qt::transparent);
@@ -412,33 +412,33 @@ void MainWindow::dropEvent(QDropEvent *e) {
 void MainWindow::mousePressEvent(QMouseEvent *event) {
   if (ui->topSpacer->underMouse()) {
     ui->topSpacer->setCursor(Qt::ClosedHandCursor);
-    m_nMouseClick_X_Coordinate = event->x();
-    m_nMouseClick_Y_Coordinate = event->y();
+    m_nMouseClick_X_Coordinate = event->position().x();
+    m_nMouseClick_Y_Coordinate = event->position().y();
   }
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
+void MainWindow::mouseReleaseEvent([[maybe_unused]] QMouseEvent *event) {
   ui->topSpacer->setCursor(Qt::OpenHandCursor);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   if (ui->topSpacer->underMouse()) {
-    move(event->globalX() - m_nMouseClick_X_Coordinate,
-         event->globalY() - m_nMouseClick_Y_Coordinate);
+    move(event->globalPosition().x() - m_nMouseClick_X_Coordinate,
+         event->globalPosition().y() - m_nMouseClick_Y_Coordinate);
   }
 }
 
-void MainWindow::enterEvent(QEvent *event) {
+void MainWindow::enterEvent([[maybe_unused]] QEvent *event) {
   ui->topWidgets->show();
   ui->bottomWidgets->show();
 }
 
-void MainWindow::leaveEvent(QEvent *event) {
+void MainWindow::leaveEvent([[maybe_unused]] QEvent *event) {
   ui->topWidgets->hide();
   ui->bottomWidgets->hide();
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
+void MainWindow::resizeEvent([[maybe_unused]] QResizeEvent *event) {
   if (engine)
     ui->subtitleLabel->setText(getSubtitle(false));
 }

@@ -28,6 +28,7 @@ SOURCES += \
     src/uchardet/src/LangModels/LangLatvianModel.cpp \
     src/uchardet/src/LangModels/LangLithuanianModel.cpp \
     src/uchardet/src/LangModels/LangMalteseModel.cpp \
+    src/uchardet/src/LangModels/LangNorwegianModel.cpp \
     src/uchardet/src/LangModels/LangPolishModel.cpp \
     src/uchardet/src/LangModels/LangPortugueseModel.cpp \
     src/uchardet/src/LangModels/LangRomanianModel.cpp \
