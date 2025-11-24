@@ -1,6 +1,6 @@
 ## Introduction
 
-Penguin Subtitle Player is a Qt5 project.
+Penguin Subtitle Player is a Qt6 project.
 
 ## Building
 
@@ -57,7 +57,7 @@ find . -path "./src/uchardet" -prune -o \( -name '*.h' -o -name '*.cpp' \) -prin
 
 #### Deployment
 
-Check [here](http://doc.qt.io/qt-5/deployment.html) for deployment details.
+Check [here](http://doc.qt.io/qt-6/deployment.html) for deployment details.
 
 ## Testing
 
