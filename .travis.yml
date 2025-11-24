@@ -11,8 +11,8 @@ jobs:
       addons:
         apt:
           packages:
-            - qt5-default
-            - qttools5-dev-tools
+            - qt6-base-dev
+            - qt6-tools-dev
             - clang-format
             - ca-certificates
     - os: osx
@@ -25,7 +25,7 @@ jobs:
       addons:
         homebrew:
           packages:
-            - qt5
+            - qt6
             - clang-format
 
 git:
@@ -41,7 +41,7 @@ before_cache:
 before_install:
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then sudo update-ca-certificates; fi
   - git submodule update --init --recursive
-  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew link qt5 --force; fi
+  - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew link qt6 --force; fi
   - if [[ $TRAVIS_OS_NAME == "osx" ]]; then brew link clang-format --force; fi
 
 script:
